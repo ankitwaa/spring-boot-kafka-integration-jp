@@ -8,6 +8,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.integration.IntegrationMessageHeaderAccessor;
+import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
@@ -39,16 +41,20 @@ public class FeedListener implements Runnable {
     @Override
     public void run() {
         while (!paused) {
-            log.info("reading from topic:{}", topic);
-            ConsumerRecords<String, String> records = kafkaConsumer.poll(2000);
-            records.forEach(cr -> {
-                log.info("Sending data to Validation Channel");
-                FeedEvent feedEvent = new FeedEvent();
-                feedEvent.setKey(cr.key());
-                feedEvent.setValue(cr.value());
-                channelGateway.sendToValidationChannel(MessageBuilder.withPayload(feedEvent).build());
-            });
-
+            try {
+                log.info("reading from topic:{}", topic);
+                ConsumerRecords<String, FeedEvent> records = kafkaConsumer.poll(10000);
+                records.forEach(cr -> {
+                    log.info("Sending data to Validation Channel");
+                    FeedEvent feedEvent = cr.value();
+                    feedEvent.setKey(cr.key());
+                    channelGateway.sendToValidationChannel(MessageBuilder.withPayload(feedEvent).setHeader(IntegrationMessageHeaderAccessor.CORRELATION_ID, feedEvent.getOrderId()).build());
+                    kafkaConsumer.commitAsync();
+                });
+            }catch (Exception exception){
+                log.error("error {}", exception);
+                kafkaConsumer.commitAsync();
+            }
         }
     }
 }
