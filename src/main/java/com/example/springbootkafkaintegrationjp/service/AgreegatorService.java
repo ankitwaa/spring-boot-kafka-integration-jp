@@ -1,3 +1,4 @@
+/*
 package com.example.springbootkafkaintegrationjp.service;
 
 import com.example.springbootkafkaintegrationjp.domain.BatchFeedEvent;
@@ -22,7 +23,7 @@ public class AgreegatorService {
     private int threshold=2;
     private long timeout=1000;
 
-    @Aggregator(inputChannel = "feedChannel", outputChannel = "batchChannel", sendPartialResultsOnExpiry = "true",
+    @Aggregator(inputChannel = "feedChannel", outputChannel = "batchChannel", sendPartialResultsOnExpiry = "true", sendTimeout = "1000",
             poller = @Poller(maxMessagesPerPoll = "5", receiveTimeout = "1000")
     )
     public BatchFeedEvent batchFeedEvent(List<Message<FeedEvent>> feedEventList){
@@ -64,3 +65,4 @@ public class AgreegatorService {
     }
 
 }
+*/
