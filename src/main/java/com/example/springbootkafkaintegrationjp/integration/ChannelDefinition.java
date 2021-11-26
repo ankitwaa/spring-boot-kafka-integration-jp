@@ -23,4 +23,9 @@ public class ChannelDefinition {
     public DirectChannel batchChannel(){
         return new DirectChannel();
     }
+
+    @Bean("tempFileCreationChannel")
+    public DirectChannel tempFileCreationChannel(){
+        return new DirectChannel();
+    }
 }

@@ -23,10 +23,6 @@ import java.sql.Time;
 @Configuration
 public class IntegrationConfig {
 
-    @Qualifier("batchChannel")
-    @Autowired
-    private DirectChannel directChannel;
-
     @Bean
     public ReleaseStrategy releaseStrategy() {
         return new TimeoutCountSequenceSizeReleaseStrategy(2, 200);
@@ -54,16 +50,4 @@ public class IntegrationConfig {
         return threadPoolTaskScheduler;
     }
 
-    @ServiceActivator(inputChannel = "feedChannel")
-    @Bean
-    public MessageHandler aggregator(MessageGroupStore jdbcMessageGroupStore) {
-        AggregatingMessageHandler aggregator =
-                new AggregatingMessageHandler(new DefaultAggregatingMessageGroupProcessor(),
-                        jdbcMessageGroupStore);
-        aggregator.setOutputChannel(directChannel);
-        aggregator.setGroupTimeoutExpression(new ValueExpression<>(10000));
-        aggregator.setReleaseStrategy(new TimeoutCountSequenceSizeReleaseStrategy(2,1000));
-        aggregator.setTaskScheduler(threadPoolTaskScheduler());
-        return aggregator;
-    }
 }

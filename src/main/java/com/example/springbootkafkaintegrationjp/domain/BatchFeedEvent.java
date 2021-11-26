@@ -7,5 +7,5 @@ import java.util.List;
 
 @Data
 public class BatchFeedEvent {
-    private List<Message<FeedEvent>> feedEventList;
+    private Message<List<FeedEvent>> feedEventList;
 }

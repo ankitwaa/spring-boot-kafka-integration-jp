@@ -7,4 +7,5 @@ public class FeedEvent {
     private String key;
     private String value;
     private String orderId;
+    private long count;
 }
