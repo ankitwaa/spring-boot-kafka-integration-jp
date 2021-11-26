@@ -41,7 +41,6 @@ public class IntegrationConfig {
     @Bean
     public MessageGroupStore messageGroupStore(){
         MessageGroupStore store = new SimpleMessageStore();
-        store.expireMessageGroups(1000);
         return store;
     }
 
@@ -62,7 +61,7 @@ public class IntegrationConfig {
                 new AggregatingMessageHandler(new DefaultAggregatingMessageGroupProcessor(),
                         jdbcMessageGroupStore);
         aggregator.setOutputChannel(directChannel);
-        aggregator.setGroupTimeoutExpression(new ValueExpression<>(100000));
+        aggregator.setGroupTimeoutExpression(new ValueExpression<>(10000));
         aggregator.setReleaseStrategy(new TimeoutCountSequenceSizeReleaseStrategy(2,1000));
         aggregator.setTaskScheduler(threadPoolTaskScheduler());
         return aggregator;
