@@ -1,4 +1,4 @@
-package com.example.springbootkafkaintegrationjp.service;
+package com.example.springbootkafkaintegrationjp.integration;
 
 import com.example.springbootkafkaintegrationjp.domain.FeedEvent;
 import lombok.extern.slf4j.Slf4j;

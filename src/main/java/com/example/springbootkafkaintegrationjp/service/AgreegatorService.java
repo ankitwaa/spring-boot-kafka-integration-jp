@@ -1,27 +1,20 @@
 package com.example.springbootkafkaintegrationjp.service;
 
 import com.example.springbootkafkaintegrationjp.config.integration.IntegrationConfig;
-import com.example.springbootkafkaintegrationjp.domain.BatchFeedEvent;
-import com.example.springbootkafkaintegrationjp.domain.FeedEvent;
+import com.example.springbootkafkaintegrationjp.integration.CustomReleaseStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.aggregator.AggregatingMessageHandler;
 import org.springframework.integration.aggregator.DefaultAggregatingMessageGroupProcessor;
-import org.springframework.integration.aggregator.TimeoutCountSequenceSizeReleaseStrategy;
 import org.springframework.integration.annotation.*;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.expression.ValueExpression;
-import org.springframework.integration.store.MessageGroup;
 import org.springframework.integration.store.MessageGroupStore;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
-
-import java.util.Iterator;
-import java.util.List;
 
 @Slf4j
 @Component
