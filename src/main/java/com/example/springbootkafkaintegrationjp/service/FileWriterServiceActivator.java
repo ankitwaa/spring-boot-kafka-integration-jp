@@ -1,18 +1,26 @@
 package com.example.springbootkafkaintegrationjp.service;
 
+import com.example.springbootkafkaintegrationjp.audit.repo.entity.FileMetricEvent;
 import com.example.springbootkafkaintegrationjp.domain.BatchFeedEvent;
+import com.example.springbootkafkaintegrationjp.domain.FeedEvent;
 import com.example.springbootkafkaintegrationjp.domain.KafkaMessageProcessedInfo;
 import com.example.springbootkafkaintegrationjp.integration.ChannelGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.integration.annotation.ServiceActivator;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -30,7 +38,7 @@ public class FileWriterServiceActivator {
     @ServiceActivator(inputChannel = "tempFileCreationChannel", outputChannel = "nullChannel")
     public void process(BatchFeedEvent batchFeedEventMessage) throws IOException {
         log.info("received batch event:{}", batchFeedEventMessage.getFeedEventList());
-
+        createFileMetricEvent(batchFeedEventMessage);
         String fileKey = batchFeedEventMessage.getFeedEventList().getPayload().get(0).getOrderId();
 
         KafkaMessageProcessedInfo path = fileMap.get(fileKey);
@@ -76,8 +84,21 @@ public class FileWriterServiceActivator {
                 log.error("error while opening file :{}");
             }
         }
+    }
 
-
+    private void createFileMetricEvent(BatchFeedEvent batchFeedEvent) {
+        List<FeedEvent>  messages = batchFeedEvent.getFeedEventList().getPayload();
+        FileMetricEvent fileMetricEvent = new FileMetricEvent();
+        if(messages != null && messages.size() > 0){
+            Optional<FeedEvent> feedEvent = messages.stream().findFirst();
+            FeedEvent feedEvent1 = feedEvent.get();
+            fileMetricEvent.setFileName(feedEvent1.getOrderId());
+            fileMetricEvent.setExpectedCount(feedEvent1.getCount());
+            fileMetricEvent.setReceivedCount(messages.size());
+            fileMetricEvent.setMessageIds(messages.stream().map(message -> (message).getValue()).collect(Collectors.toList()));
+            fileMetricEvent.setStatus("COMPLETED");
+            channelGateway.sendToFileMetricsChannel(MessageBuilder.withPayload(fileMetricEvent).build());
+        }
     }
 
 }

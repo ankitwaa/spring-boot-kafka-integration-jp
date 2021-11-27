@@ -33,4 +33,9 @@ public class ChannelDefinition {
     public DirectChannel groupDiscardChannel(){
         return new DirectChannel();
     }
+
+    @Bean("fileMetricsChannel")
+    public DirectChannel fileMetricsChannel(){
+        return new DirectChannel();
+    }
 }

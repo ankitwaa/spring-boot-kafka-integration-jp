@@ -1,5 +1,7 @@
 package com.example.springbootkafkaintegrationjp.listener;
 
+import com.example.springbootkafkaintegrationjp.audit.listener.EventListener;
+import com.example.springbootkafkaintegrationjp.config.kafka.CustomDeserializable;
 import com.example.springbootkafkaintegrationjp.config.kafka.TopicConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class ApplicationInitializer {
     @Value("${feed.region}")
     private String region;
 
+    @Value("${feed.event.topic:event_log}")
+    private String eventTopic;
+
     @Value("${feed.topic.concurrency:1}")
     private int threadCount;
 
@@ -52,9 +57,14 @@ public class ApplicationInitializer {
             for (int i = 0; i < threadCount; i++) {
                 log.info("creating listener for system:{}, topic:{}", key, value);
                 FeedListener feedListener = applicationContext.getBean(FeedListener.class);
-                feedListener.initialize(value, "group_" + value + "_" + UUID.randomUUID().toString());
+                //feedListener.initialize(value, "group_" + value + "_" + UUID.randomUUID().toString(), CustomDeserializable.class);
+                feedListener.initialize(value, "group_" + value, CustomDeserializable.class);
                 futures.add(executorService.submit(feedListener));
             }
         });
+
+        log.info("starting event listener");
+        EventListener eventListener = applicationContext.getBean(EventListener.class);
+        eventListener.initialize(eventTopic, "group_" + eventTopic, CustomDeserializable.class);
     }
 }

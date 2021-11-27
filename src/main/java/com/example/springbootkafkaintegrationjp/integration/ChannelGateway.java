@@ -1,5 +1,6 @@
 package com.example.springbootkafkaintegrationjp.integration;
 
+import com.example.springbootkafkaintegrationjp.audit.repo.entity.FileMetricEvent;
 import com.example.springbootkafkaintegrationjp.domain.FeedEvent;
 import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
@@ -13,4 +14,7 @@ public interface ChannelGateway {
 
     @Gateway(requestChannel = "feedChannel")
     void sendToFeedChannel(Message<FeedEvent> feedEventMessage);
+
+    @Gateway(requestChannel = "fileMetricsChannel")
+    void sendToFileMetricsChannel(Message<FileMetricEvent> feedEventMessage);
 }
