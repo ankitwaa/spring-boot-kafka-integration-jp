@@ -31,6 +31,10 @@ public class AgreegatorService {
     @Autowired
     private DirectChannel directChannel;
 
+    @Qualifier("groupDiscardChannel")
+    @Autowired
+    private DirectChannel groupDiscardChannel;
+
     @Autowired
     private IntegrationConfig integrationConfig;
 
@@ -42,9 +46,15 @@ public class AgreegatorService {
                         jdbcMessageGroupStore);
         aggregator.setOutputChannel(directChannel);
         aggregator.setGroupTimeoutExpression(new ValueExpression<>(10000));
-        aggregator.setReleaseStrategy(new TimeoutCountSequenceSizeReleaseStrategy(2,1000));
+        aggregator.setReleaseStrategy(new CustomReleaseStrategy(5000,1000000));
         aggregator.setTaskScheduler(integrationConfig.threadPoolTaskScheduler());
+        aggregator.setDiscardChannel(groupDiscardChannel);
         return aggregator;
+    }
+
+    @ServiceActivator(inputChannel = "groupDiscardChannel")
+    public void discardChannel(Message<?> groupMessage){
+        log.info("Received Group message in discard Channel" + groupMessage);
     }
 
 }

@@ -28,4 +28,9 @@ public class ChannelDefinition {
     public DirectChannel tempFileCreationChannel(){
         return new DirectChannel();
     }
+
+    @Bean("groupDiscardChannel")
+    public DirectChannel groupDiscardChannel(){
+        return new DirectChannel();
+    }
 }
