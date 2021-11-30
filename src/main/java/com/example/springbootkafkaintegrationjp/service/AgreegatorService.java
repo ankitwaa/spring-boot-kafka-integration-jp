@@ -11,6 +11,8 @@ import org.springframework.integration.aggregator.DefaultAggregatingMessageGroup
 import org.springframework.integration.annotation.*;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.expression.ValueExpression;
+import org.springframework.integration.mongodb.inbound.MongoDbMessageSource;
+import org.springframework.integration.mongodb.store.MongoDbMessageStore;
 import org.springframework.integration.store.MessageGroupStore;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
@@ -33,10 +35,10 @@ public class AgreegatorService {
 
     @ServiceActivator(inputChannel = "feedChannel")
     @Bean
-    public MessageHandler aggregator(MessageGroupStore jdbcMessageGroupStore) {
+    public MessageHandler aggregator(MongoDbMessageStore mongoDbMessageStore) {
         AggregatingMessageHandler aggregator =
                 new AggregatingMessageHandler(new DefaultAggregatingMessageGroupProcessor(),
-                        jdbcMessageGroupStore);
+                        mongoDbMessageStore);
         aggregator.setOutputChannel(directChannel);
         aggregator.setGroupTimeoutExpression(new ValueExpression<>(10000));
         aggregator.setReleaseStrategy(new CustomReleaseStrategy(5000,1000000));

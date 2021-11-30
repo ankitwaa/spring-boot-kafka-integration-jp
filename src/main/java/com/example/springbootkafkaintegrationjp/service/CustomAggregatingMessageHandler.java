@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.integration.aggregator.MessageGroupExpiredEvent;
+import org.springframework.integration.mongodb.store.MongoDbMessageStore;
 import org.springframework.integration.store.MessageGroupStore;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -20,11 +21,11 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CustomAggregatingMessageHandler implements ApplicationListener<MessageGroupExpiredEvent> {
 
-    private MessageGroupStore store;
+    private MongoDbMessageStore store;
     private ChannelGateway channelGateway;
 
     @Autowired
-    public void setStore(MessageGroupStore store) {
+    public void setStore(MongoDbMessageStore store) {
         this.store = store;
     }
 
