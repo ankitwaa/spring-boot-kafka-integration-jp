@@ -8,12 +8,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.aggregator.AggregatingMessageHandler;
 import org.springframework.integration.aggregator.DefaultAggregatingMessageGroupProcessor;
-import org.springframework.integration.annotation.*;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.expression.ValueExpression;
-import org.springframework.integration.mongodb.inbound.MongoDbMessageSource;
 import org.springframework.integration.mongodb.store.MongoDbMessageStore;
-import org.springframework.integration.store.MessageGroupStore;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.stereotype.Component;
@@ -41,14 +39,14 @@ public class AgreegatorService {
                         mongoDbMessageStore);
         aggregator.setOutputChannel(directChannel);
         aggregator.setGroupTimeoutExpression(new ValueExpression<>(10000));
-        aggregator.setReleaseStrategy(new CustomReleaseStrategy(5000,1000000));
+        aggregator.setReleaseStrategy(new CustomReleaseStrategy(5000, 1000000));
         aggregator.setTaskScheduler(integrationConfig.threadPoolTaskScheduler());
         aggregator.setDiscardChannel(groupDiscardChannel);
         return aggregator;
     }
 
     @ServiceActivator(inputChannel = "groupDiscardChannel")
-    public void discardChannel(Message<?> groupMessage){
+    public void discardChannel(Message<?> groupMessage) {
         log.info("Received Group message in discard Channel" + groupMessage);
     }
 

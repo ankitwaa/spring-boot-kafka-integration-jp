@@ -3,7 +3,6 @@ package com.example.springbootkafkaintegrationjp.config.integration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.integration.aggregator.DefaultAggregatingMessageGroupProcessor;
 import org.springframework.integration.mongodb.store.MongoDbMessageStore;
 import org.springframework.integration.store.MessageGroupStore;
