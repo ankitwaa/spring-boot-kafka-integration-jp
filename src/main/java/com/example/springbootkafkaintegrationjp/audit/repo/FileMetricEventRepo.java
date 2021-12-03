@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface FileMetricEventRepo extends MongoRepository<FileMetricEvent, String> {
-    Optional<Event> findByFileName(String fileName);
+    Optional<FileMetricEvent> findByFileName(String fileName);
 }
